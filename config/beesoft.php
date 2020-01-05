@@ -7,6 +7,8 @@ return [
 		'keywords' => 'behero,beesoft,blog,php,laravel,golang,python,javascript',
 		'description' => 'Behero\'s Blog - BeeSoft.ink - PHP|Laravel|GoLang|Python|JavaScript',
 		'email' => 'beherochuling@163.com',
+		'ipc' => '皖ICP备 17025559号-1',
+		'ipc_link' => 'http://beian.miit.gov.cn',
 	],
     'years' => env('BEESOFT_YEARS', '2009-2018'),
     'sort_default' => env('SORT_DEFAULT', '255'),
