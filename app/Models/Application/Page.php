@@ -32,6 +32,6 @@ class Page extends Model {
         return $this->belongsTo('App\Models\Category\Category');
     }
     public function tags() { // 标签 多对多 反向
-        return $this->belongsToMany('App\Models\Category\Tag', 'category_user_tag');
+        return $this->belongsToMany('App\Models\Category\Tag', 'category_user_tag', 'id')->wherePivot('table', 'pictures');
     }
 }

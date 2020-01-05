@@ -91,7 +91,7 @@ class CategoryController extends Controller {
                 'data' => $model,
             ];
         } else {
-            $types = auth('admin')->user()->profile->categories ?? '[]';
+            $types = auth('admin')->user()->configure->categories ?? '[]';
             $types = json_decode($types, true);
 
             $parent_id = $request->input('parent_id', 0);
@@ -107,7 +107,7 @@ class CategoryController extends Controller {
         }
     }
     public function create(Request $request) {
-        $types = auth('admin')->user()->profile->categories;
+        $types = auth('admin')->user()->configure->categories;
         $types = json_decode($types, true);
 
         $category_array = ThisModel::where('created_by', auth('admin')->user()->id)->get();
@@ -133,9 +133,8 @@ class CategoryController extends Controller {
             return back();
         }
     }
-    public function show(int $id) {}
     public function edit(int $id) {
-        $types = auth('admin')->user()->profile->categories;
+        $types = auth('admin')->user()->configure->categories;
         $types = json_decode($types, true);
 
         $category_array = ThisModel::where('created_by', auth('admin')->user()->id)->get();

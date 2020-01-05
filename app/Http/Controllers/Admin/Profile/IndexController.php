@@ -11,11 +11,12 @@ class IndexController extends Controller {
     private $configures = [
         'categories' => '分类',
         'tags' => '标签',
+        'notes' => '笔记',
         'posts' => '文章',
         'pages' => '页面',
-        'accounts' => '账号',
-        'links' => '链接',
         'pictures' => '图片',
+        'links' => '链接',
+        'accounts' => '账号',
     ];
 
 	public function profile() { // 编辑资料 ok
@@ -60,10 +61,10 @@ class IndexController extends Controller {
 		$user = auth('admin')->user();
 
         foreach ( $this->configures as $key => $value ) {
-            $user->profile->{$key} = json_encode($request->{$key});
+            $user->configure->{$key} = json_encode($request->{$key});
         }
 
-        $result = $user->profile->save();
+        $result = $user->configure->save();
 
         if ( $result ) {
             flash('修改资料成功!', 'success');

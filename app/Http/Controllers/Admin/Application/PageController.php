@@ -1,15 +1,13 @@
 <?php
 namespace App\Http\Controllers\Admin\Application;
 
-use App\Models\Application\Page as ThisModel;
-use App\Models\Category\Category;
-use App\Models\Category\Tag;
-
 use Illuminate\Http\Request;
+
+use App\Models\Application\Page as ThisModel;
 use App\Http\Requests\Application\PageRequest as ThisRequest;
 
 class PageController extends Controller {
-    private $baseInfo = [
+    protected $baseInfo = [
         'slug' => 'pages',
         'title' => '页面',
         'description' => '页面列表',
@@ -27,6 +25,11 @@ class PageController extends Controller {
         'updated_at',
     ];
 
+    public function __construct() {
+        $this->model = new ThisModel;
+
+        parent::__construct();
+    }
     public function index(Request $request) {
         if ( $request->ajax() ) {
             $draw = $request->input('draw', 1);
@@ -98,104 +101,9 @@ class PageController extends Controller {
                 'category_id' => 0,
             ];
 
-            $tags = Tag::pluck('title', 'id');
+            // $tags = Tag::pluck('title', 'id');
 
             return view($this->baseInfo['view_path'].'index', array_merge($this->baseInfo, compact('types', 'content_types', 'search', 'tags')));
         }
-    }
-    public function create(Request $request) {
-        $types = ThisModel::$types;
-        $content_type = '';
-        $categories = Category::where('type', 'commons')->where('created_by', auth('admin')->user()->id)->get();
-        $categories = level_array($categories);
-        $categories = plain_array($categories, 0, "==");
-        
-        // $tags = Tag::pluck('title');
-        // $tags = json_encode($tags);
-        // $keywords = Keyword::pluck('title');
-        // $keywords = json_encode($keywords);
-
-        return view($this->baseInfo['view_path'].'create', array_merge($this->baseInfo, compact('types', 'content_type', 'categories')));
-    }
-    public function store(ThisRequest $request) {
-        $result = ThisModel::create(array_merge($request->all(), [
-            'created_by' => auth('admin')->user()->id,
-        ]));
-
-        if ( $result ) {
-            $result->content()->save(new Content([
-                'content' => $request->content,
-                'content_type' => $request->type,
-            ]));
-            // $tags = $request->input('tags');
-            // log_file($tags);
-            // $exist_tags = Tag::where('title', 'in', $tags)->pluck('title', 'id');
-            // log_file($exist_tags, 'exist_tags');
-            // $not_exist_tags = array_diff($tags, $exist_tags);
-            // log_file($not_exist_tags, 'not_exist_tags');
-
-            // if ( $not_exist_tags ) {
-            //     $temp = [];
-            //     foreach ( $not_exist_tags as $tag ) {
-            //         $temp[] = [
-            //             'slug' => str_slug($tag),
-            //             'title' => $tag,
-            //             'user_id' => 0, // todo user_id slug
-            //         ];
-            //     }
-            //     $create_result = Tag::create($temp);
-            //     log_file($create_result);
-            // }
-
-            
-        }
-
-        // if ( $result ) {
-        //     flash('操作成功', 'success');
-
-        //     return redirect($this->baseInfo['link']);
-        // } else {
-        //     flash('操作失败', 'error');
-
-        //     return back(); // 继续
-        // }
-    }
-    public function show(int $id) {}
-    public function edit(int $id) {
-        $types = ThisModel::$types;
-        $categories = Category::where('type', 'commons')->where('created_by', auth('admin')->user()->id)->get();
-        $categories = level_array($categories);
-        $categories = plain_array($categories, 0, "==");
-        $tags = Tag::pluck('title');
-        $tags = json_encode($tags);
-        $item = ThisModel::find($id);
-
-        return view($this->baseInfo['view_path'].'edit', array_merge($this->baseInfo, compact('types', 'categories', 'tags', 'item')));
-    }
-    public function update(ThisRequest $request, int $id) {
-        $post = ThisModel::find($id);
-        $result = $post->update($request->all());
-
-        if ( $result ) {
-            flash('操作成功', 'success');
-
-            return redirect($this->baseInfo['link']);
-        } else {
-            flash('操作失败', 'error');
-            $error = back()->withErrors();
-            dd($error);
-            // return back(); // 继续
-        }
-    }
-    public function destroy(Request $request, int $id) {
-        $result = ThisModel::destroy($id);
-
-        if ( $result ) {
-            flash('删除成功', 'success');
-        } else {
-            flash('删除失败', 'error');
-        }
-
-        return redirect($this->baseInfo['link']);
     }
 }

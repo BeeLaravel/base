@@ -48,3 +48,7 @@ function breadcrumbs($data) {
 
 	return implode(' > ', $return_data);
 }
+function get_types($slug) {
+	$types = auth('admin')->user()->configure->{$slug};
+    return json_decode($types, true);
+}

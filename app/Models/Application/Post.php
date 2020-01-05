@@ -24,7 +24,7 @@ class Post extends Model {
         return $this->belongsTo('App\Models\Category\Category');
     }
     public function tags() { // 标签 多对多 反向
-        return $this->belongsToMany(Tag::class, 'category_user_tag');
+        return $this->belongsToMany('App\Models\Category\Tag', 'category_user_tag', 'id')->wherePivot('table', 'pictures');
     }
     public function content() { // 内容 一对一
         return $this->hasOne('App\Models\Application\Content')->withDefault();

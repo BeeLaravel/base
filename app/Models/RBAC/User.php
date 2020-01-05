@@ -48,7 +48,13 @@ class User extends Authenticatable { // RBAC - 用户
         return $this->belongsTo('App\Models\RBAC\User', 'created_by');
     }
 
-    public function profile() { // 个人信息 一对一
-        return $this->hasOne('App\Models\RBAC\Profile');
+    public function configure() { // 配置 一对一
+        return $this->hasOne('App\Models\User\Configure');
+    }
+    public function profiles() { // 信息 一对多
+        return $this->hasMany('App\Models\User\Profile');
+    }
+    public function contacts() { // 联系方式 一对多
+        return $this->hasMany('App\Models\User\Contact');
     }
 }

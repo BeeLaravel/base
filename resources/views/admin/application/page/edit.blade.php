@@ -57,7 +57,7 @@
                             <label class="control-label col-md-3 col-sm-3" for="myEditor">内容 * :</label>
                             <div class="col-md-8 col-sm-8">
                                 <div id="editor" class="editor">
-                                    @if ( $item['content_type']=='ueditor' )
+                                    @if ( ($item['content_type']??'')=='ueditor' )
                                         <script type="text/plain" name="content" id="myEditor">{!! $item['content'] !!}</script>
                                     @else
                                         <textarea name="content" class="form-control" id='myEditor'>{{ $item['content'] }}</textarea>
@@ -149,7 +149,7 @@
             });
         });
     </script>
-    @switch ( $item['content_type'] )
+    @switch ( $item['content_type']??'' )
         @case('ueditor')
             @include('vendor.ueditor.assets')
             <script type="text/javascript">

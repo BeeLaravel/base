@@ -4,14 +4,24 @@ namespace App\Models\Category;
 class Category extends Model {
     protected $table = 'category_categories';
     protected $fillable = [
-        'parent_id',
-        'title',
-        'slug',
         'type',
+        'parent_id',
+        'slug',
+        'title',
         'description',
         'sort',
         'created_by',
     ];
+
+    public static function getCategories($slug) {
+        $items = self::where('created_by', auth('admin')->user()->id)
+            ->whereIn('type', ['default', $slug])
+            ->get();
+        $items = level_array($items);
+        $items = plain_array($items, 0, '==');
+
+        return $items;
+    }
 
     public function parent() { // 父级 一对多 反向
         return $this->belongsTo(self::class, 'parent_id');
@@ -31,5 +41,8 @@ class Category extends Model {
     }
     public function pages() { // 页面 一对多
         return $this->hasMany('App\Models\Application\Page');
+    }
+    public function notes() { // 笔记 一对多
+        return $this->hasMany('App\Models\Application\Note');
     }
 }

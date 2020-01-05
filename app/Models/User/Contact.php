@@ -5,24 +5,16 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Traits\Admin\ActionButtonTrait;
 
-class Profile extends Model { // RBAC 用户信息
+class Contact extends Model { // 用户 - 联系方式
     use ActionButtonTrait;
 
-    protected $table = 'rbac_profiles';
+    protected $table = 'user_contacts';
     protected $primaryKey = 'user_id';
     protected $touches = ['user'];
 
     protected $fillable = [
-        'qq',
-        'wechat',
-        'weibo',
-        'github',
-        'gitee',
-
-        'categories',
-        'tags',
-
-        'description',
+        'slug',
+        'content',
     ];
 
     // 关联

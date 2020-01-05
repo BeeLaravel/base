@@ -48,7 +48,7 @@ $(document).ready(function(){
             {"data": "id", "name": "id"},
             {"data": "title", "name": "title", "orderable": true},
             {"data": "category_title", "name": "category_title", "orderable": true},
-            {"data": "tag_title", "name": "tag_title", "orderable": true},
+            {"data": "tags", "name": "tags", "orderable": true},
             {"data": "sort", "name": "sort", "orderable": true},
             {"data": "created_at", "name": "created_at", "orderable": true},
             {"data": "updated_at", "name": "updated_at", "orderable": true},

@@ -27,7 +27,8 @@ class NoteController extends Controller {
 
     public function __construct() {
         $this->model = new ThisModel;
-        $this->request = new ThisRequest;
+
+        parent::__construct();
     }
     public function index(Request $request) {
         if ( $request->ajax() ) {
@@ -79,6 +80,7 @@ class NoteController extends Controller {
                 foreach ( $model as $item ) {
                     $item->title = '<a href="' . url($this->baseInfo['link']."/".$item->id."/renew") . '">' . $item->title . '</a>';
                     $item->category_title = $item->category_id ? $item->category->title : '';
+                    $item->tags = implode('<br>', $item->tags()->pluck('title')->toArray()??[]);
                     $item->button = $item->getActionButtons($this->baseInfo['slug']);
                 }
             }

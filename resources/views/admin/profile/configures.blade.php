@@ -43,8 +43,8 @@
                                 <label class="control-label col-md-4 col-sm-4" for="{{$key}}">{{$value}} * :</label>
                                 <div class="col-md-6 col-sm-6">
                                     <ul id="{{$key}}" class="form-control success">
-                                        @if ( $item->profile->{$key} )
-                                            @foreach ( json_decode($item->profile->{$key}, true) as $i )
+                                        @if ( $item->configure->{$key} )
+                                            @foreach ( json_decode($item->configure->{$key}, true) as $i )
                                                 <li>{{ $i }}</li>
                                             @endforeach
                                         @endif
