@@ -32,7 +32,7 @@ class Controller extends \App\Http\Controllers\Admin\Controller {
         ]));
         $result = $this->model->save();
 
-        if ( $result && $data['tags'] ) {
+        if ( $result && $data['tags']??[] ) {
             $tags = Tag::setTags($this->slug, $data['tags']);
             $this->model->tags()->attach($tags);
         }

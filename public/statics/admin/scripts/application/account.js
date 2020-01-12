@@ -46,6 +46,7 @@ $(document).ready(function(){
         "order": [
             [0, "desc"]
         ],
+        "stateSave": true,
 
         "pagingType": "full_numbers", // 分页样式 full_numbers 首页 末页 上页 下页
         'aLengthMenu': [50, 20, 100, 200],

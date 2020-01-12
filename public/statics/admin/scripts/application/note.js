@@ -43,7 +43,7 @@ $(document).ready(function(){
         "stateSave": true,
 
         "pagingType": "full_numbers", // 分页样式 full_numbers 首页 末页 上页 下页
-        'aLengthMenu': [50, 20, 100],
+        'aLengthMenu': [50, 20, 100, 200],
         "columns": [
             {"data": "id", "name": "id"},
             {"data": "title", "name": "title", "orderable": true},
