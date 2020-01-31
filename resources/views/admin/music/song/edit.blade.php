@@ -3,7 +3,8 @@
 @section('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('template/color_admin/plugins/parsley/src/parsley.css') }}" />
     <link href="{{asset('template/color_admin/plugins/jquery-tag-it/css/jquery.tagit.css')}}" rel="stylesheet" />
-    <!-- <link href="{{asset('template/color_admin/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css')}}" rel="stylesheet" /> -->
+    <link href="{{asset('template/color_admin/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css')}}" rel="stylesheet" />
+
     <style type="text/css">
         textarea.form-control {
             height: 200px;
@@ -51,6 +52,18 @@
                                 <input class="form-control" type="text" name="title" value="{{ $item['title'] }}" placeholder="标题" data-parsley-required="true" id="title" />
                             </div>
                         </div>
+                        <div class="form-group"><!-- 歌手 -->
+                            <label class="control-label col-md-3 col-sm-3" for="singers">歌手 :</label>
+                            <div class="col-md-8 col-sm-8">
+                                <ul id="singers" class="success">
+                                    @if ( $item->singers )
+                                        @foreach ( $item->singers as $singer )
+                                            <li>{{ $singer->title }}</li>
+                                        @endforeach
+                                    @endif
+                                </ul>
+                            </div>
+                        </div>
                         <div class="form-group"><!-- 韵文 -->
                             <label class="control-label col-md-3 col-sm-3" for="poem">韵文 :</label>
                             <div class="col-md-8 col-sm-8">
@@ -93,15 +106,24 @@
     <script src="{{ asset('template/color_admin/plugins/parsley/dist/parsley.min.js') }}"></script>
     <script src="{{ asset('template/color_admin/plugins/parsley/src/i18n/zh_cn.js') }}"></script>
     <script src="{{ asset('template/color_admin/plugins/jquery-tag-it/js/tag-it.min.js')}} "></script>
-    <!-- <script src="{{ asset('template/color_admin/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js')}} "></script> -->
-    <!-- <script src="{{ asset('template/color_admin/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.js')}} "></script> -->
+    <script src="{{ asset('template/color_admin/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js')}} "></script>
+    <script src="{{ asset('template/color_admin/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.js')}} "></script>
 
     <script src="{{ asset('template/color_admin/js/apps.min.js') }}"></script>
 
     <script type="text/javascript">
         $(function(){
             App.init();
+
             $('form').parsley();
+
+            $("#singers").tagit({
+                fieldName: "singers[]",
+                availableTags: {!! $singers??'[]' !!},
+                tagLimit: 5, // 最大标签数
+                placeholderText: '标签',
+                allowSpaces: true
+            });
         });
     </script>
 @endsection

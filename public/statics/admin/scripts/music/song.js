@@ -46,6 +46,7 @@ $(document).ready(function(){
         "columns": [
             {"data": "id", "name": "id"},
             {"data": "title", "name": "title", "orderable": true},
+            {"data": "singer_titles", "name": "singer_titles", "orderable": true},
             {"data": "view_times", "name": "view_times", "orderable": true},
             {"data": "favor_times", "name": "favor_times", "orderable": true},
             {"data": "save_times", "name": "save_times", "orderable": true},
@@ -53,9 +54,5 @@ $(document).ready(function(){
             {"data": "updated_at", "name": "updated_at", "orderable": true},
             {"data": "button", "name": "button", 'type': 'html', "orderable": false}
         ]
-    });
-    $('select[name=type]').change(function(){ // 类型
-        var type = $(this).val();
-        table.column(3).search(type).draw();
     });
 });

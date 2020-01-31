@@ -2,8 +2,8 @@
 namespace App\Http\Controllers\Admin\Music;
 
 use App\Models\Music\Song as ThisModel;
-use App\Models\Category\Category;
-use App\Models\Category\Tag;
+use App\Models\Music\Singer;
+use App\Models\Music\Album;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\Music\SongRequest as ThisRequest;
@@ -21,8 +21,6 @@ class SongController extends Controller {
     private $show = [
         'id',
         'title',
-        'type',
-        'url',
         'created_at',
         'updated_at',
     ];
@@ -73,6 +71,7 @@ class SongController extends Controller {
 
             if ( $model ) {
                 foreach ( $model as $item ) {
+                    $item->singer_titles = implode("<br>\n", ($item->singers->pluck('title')->toArray()?:[]));
                     $item->button = $item->getActionButtons($this->baseInfo['slug']);
                 }
             }
@@ -84,69 +83,45 @@ class SongController extends Controller {
                 'data' => $model,
             ];
         } else {
-            $types = auth('admin')->user()->profile->accounts ?? '[]';
-            $types = json_decode($types, true);
-
             $search = [
-                'type' => $request->cookie('type') ?: '',
             ];
 
-            return view($this->baseInfo['view_path'].'index', array_merge($this->baseInfo, compact('types', 'search')));
+            return view($this->baseInfo['view_path'].'index', array_merge($this->baseInfo, compact('search')));
         }
     }
     public function create(Request $request) {
-        $types = auth('admin')->user()->profile->accounts;
-        $types = json_decode($types, true);
+        $singers = Singer::pluck('title');
+        $singers = json_encode($singers);
 
-        $category_array = Category::where('created_by', auth('admin')->user()->id)->where('type', 'commons')->get();
-        $categories = level_array($category_array);
-        $categories = plain_array($categories, 0, '==');
-
-        $tags = Tag::where('created_by', auth('admin')->user()->id)->whereIn('type', ['commons', 'links'])->pluck('title');
-        $tags = json_encode($tags);
-
-        return view($this->baseInfo['view_path'].'create', array_merge($this->baseInfo, compact('types', 'categories', 'tags')));
+        return view($this->baseInfo['view_path'].'create', array_merge($this->baseInfo, compact('singers')));
     }
     public function store(ThisRequest $request) {
         $data = array_merge($request->all(), [
             'created_by' => auth('admin')->user()->id,
         ]);
-        // if ( isset($data['password']) && $data['password'] ) {
-            // $method = "DES-ECB"; // DES-ECB|AES-128-CBC
-            // $password = "beesoft";
-            // $data['password'] = openssl_encrypt($data['password'], $method, $password);
-        // }
         $result = ThisModel::create($data);
 
         if ( $result ) {
-            $tags = $request->input('tags', []);
-            $exist_tags = Tag::where('created_by', auth('admin')->user()->id)
-                ->whereIn('type', ['commons', 'links'])
-                ->whereIn('title', $tags)
+            $singers = $request->input('singers', []);
+            $exist_singers = Singer::whereIn('title', $singers)
                 ->pluck('title', 'id')->toArray();
-            $not_exist_tags = array_diff($tags, $exist_tags);
+            $not_exist_singers = array_diff($singers, $exist_singers);
 
-            if ( $not_exist_tags ) {
+            if ( $not_exist_singers ) {
                 $temp = [];
-                foreach ( $not_exist_tags as $tag ) {
+                foreach ( $not_exist_singers as $singer ) {
                     $temp[] = [
-                        'title' => $tag,
-                        'slug' => str_slug($tag),
-                        'type' => 'commons',
-                        'description' => $tag,
+                        'title' => $singer,
                         'created_by' => auth('admin')->user()->id,
                     ];
                 }
-                $create_result = Tag::insert($temp);
+                $create_result = Singer::insert($temp);
             }
 
-            if ( $tags ) {
-                $tags = Tag::where('created_by', auth('admin')->user()->id)
-                    ->whereIn('type', ['commons', 'links'])
-                    ->whereIn('title', $tags)
+            if ( $singers ) {
+                $singers = Singer::whereIn('title', $singers)
                     ->pluck('id')->toArray();
-                $tags = array_combine($tags, array_fill(0, count($tags), ['table' => 'links']));
-                $result->tags()->attach($tags);
+                $result->singers()->attach($singers);
             }
         }
 
@@ -162,60 +137,40 @@ class SongController extends Controller {
     }
     public function show(int $id) {}
     public function edit(int $id) {
-        $types = auth('admin')->user()->profile->accounts;
-        $types = json_decode($types, true);
+        $singers = Singer::pluck('title');
+        $singers = json_encode($singers);
 
-        $category_array = Category::where('created_by', auth('admin')->user()->id)->where('type', 'commons')->get();
-        $categories = level_array($category_array);
-        $categories = plain_array($categories, 0, '==');
+        $item = ThisModel::with('singers')->find($id);
 
-        $tags = Tag::where('created_by', auth('admin')->user()->id)->whereIn('type', ['commons'])->pluck('title');
-        $tags = json_encode($tags);
-
-        $item = ThisModel::with('tags')->find($id);
-
-        return view($this->baseInfo['view_path'].'edit', array_merge($this->baseInfo, compact('types', 'categories', 'tags', 'item')));
+        return view($this->baseInfo['view_path'].'edit', array_merge($this->baseInfo, compact('singers', 'item')));
     }
     public function update(ThisRequest $request, int $id) {
         $item = ThisModel::find($id);
         $data = $request->all();
-        // if ( isset($data['password']) && $data['password'] ) {
-            // $method = "DES-ECB"; // DES-ECB|AES-128-CBC
-            // $password = "beesoft";
-            // $data['password'] = openssl_encrypt($data['password'], $method, $password);
-        // }
         $result = $item->update($data);
 
         if ( $result ) {
-            $tags = $request->input('tags', []);
-            $exist_tags = Tag::where('created_by', auth('admin')->user()->id)
-                ->whereIn('type', ['commons', 'links'])
-                ->whereIn('title', $tags)
+            $singers = $request->input('singers', []);
+            $exist_singers = Singer::whereIn('title', $singers)
                 ->pluck('title', 'id')->toArray();
-            $not_exist_tags = array_diff($tags, $exist_tags);
+            $not_exist_singers = array_diff($singers, $exist_singers);
 
-            if ( $not_exist_tags ) {
+            if ( $not_exist_singers ) {
                 $temp = [];
-                foreach ( $not_exist_tags as $tag ) {
+                foreach ( $not_exist_singers as $singer ) {
                     $temp[] = [
-                        'title' => $tag,
-                        'slug' => str_slug($tag),
-                        'type' => 'commons',
-                        'description' => $tag,
+                        'title' => $singer,
                         'created_by' => auth('admin')->user()->id,
                     ];
                 }
-                $create_result = Tag::insert($temp);
+                $create_result = Singer::insert($temp);
             }
 
-            if ( $tags ) {
-                $tags = Tag::where('created_by', auth('admin')->user()->id)
-                    ->whereIn('type', ['commons', 'links'])
-                    ->whereIn('title', $tags)
+            if ( $singers ) {
+                $singers = Singer::whereIn('title', $singers)
                     ->pluck('id')->toArray();
-                $tags = array_combine($tags, array_fill(0, count($tags), ['table' => 'links']));
-                $item->tags()->detach();
-                $item->tags()->attach($tags);
+                $item->singers()->detach();
+                $item->singers()->attach($singers);
             }
         }
 

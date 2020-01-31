@@ -10,6 +10,9 @@ class Song extends Model {
     public function creater() { // 创建人
         return $this->belongsTo('App\Models\RBAC\User', 'created_by');
     }
+    public function singers() { // 歌手
+        return $this->belongsToMany('App\Models\Music\Singer', 'music_song_singer', 'song_id', 'singer_id');
+    }
 
     public function category() { // 分类 一对多 反向
         return $this->belongsTo('App\Models\Category\Category', 'category_id');

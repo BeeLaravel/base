@@ -21,7 +21,6 @@ class SingerController extends Controller {
     private $show = [
         'id',
         'title',
-        'type',
         'created_at',
         'updated_at',
     ];
@@ -99,15 +98,9 @@ class SingerController extends Controller {
         }
     }
     public function create(Request $request) {
-        // $types = ThisModel::$types;
         $tags = Tag::get();
         $tags = level_array($tags);
         $tags = plain_array($tags, 0, "==");
-        
-        // $tags = Tag::pluck('title');
-        // $tags = json_encode($tags);
-        // $keywords = Keyword::pluck('title');
-        // $keywords = json_encode($keywords);
 
         return view($this->baseInfo['view_path'].'create', array_merge($this->baseInfo, compact('tags')));
     }
@@ -115,30 +108,6 @@ class SingerController extends Controller {
         $result = ThisModel::create(array_merge($request->all(), [
             'created_by' => auth('admin')->user()->id,
         ]));
-
-        if ( $result ) {
-            // $tags = $request->input('tags');
-            // log_file($tags);
-            // $exist_tags = Tag::where('title', 'in', $tags)->pluck('title', 'id');
-            // log_file($exist_tags, 'exist_tags');
-            // $not_exist_tags = array_diff($tags, $exist_tags);
-            // log_file($not_exist_tags, 'not_exist_tags');
-
-            // if ( $not_exist_tags ) {
-            //     $temp = [];
-            //     foreach ( $not_exist_tags as $tag ) {
-            //         $temp[] = [
-            //             'slug' => str_slug($tag),
-            //             'title' => $tag,
-            //             'user_id' => 0, // todo user_id slug
-            //         ];
-            //     }
-            //     $create_result = Tag::create($temp);
-            //     log_file($create_result);
-            // }
-
-            
-        }
 
         if ( $result ) {
             flash('操作成功', 'success');
@@ -152,10 +121,6 @@ class SingerController extends Controller {
     }
     public function show(int $id) {}
     public function edit(int $id) {
-        // $tags = Tag::get();
-        // $tags = level_array($tags);
-        // $tags = plain_array($tags, 0, "==");
-
         $tags = Tag::pluck('title');
         $tags = json_encode($tags);
 

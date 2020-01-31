@@ -30,21 +30,13 @@
                         <button type="button" class="btn btn-primary m-r-5 m-b-5"><i class="fa fa-plus-square-o"></i> 添加{{$title}}</button>
                     </a>
                     <form action="" method="POST" class="form-inline" style="margin-bottom: 5px;">
-                        <div class="form-group">
-                            <label class="control-label">类型：</label>
-                            <select name="type" class="form-control">
-                                <option value="">所有</option>
-                                @foreach ( $types as $type )
-                                    <option value="{{ $type }}" @if ( $search['type']==$type ) selected="selected" @endif>{{ $type }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                     </form>
                     <table class="table table-bordered table-hover responsive dt-responsive" id="datatable" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>标题</th>
+                                <th>歌手</th>
                                 <th>聆听次数</th>
                                 <th>喜爱次数</th>
                                 <th>收藏次数</th>
@@ -100,10 +92,6 @@
                 }, function () {
                     $('form[name=delete_item_'+id+']').submit();
                 });
-            });
-
-            $("select[name=type]").change(function(){
-                $.cookie('type', $(this).val());
             });
         });
     </script>
